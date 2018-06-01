@@ -1,23 +1,21 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Diagnostics;
 using System.ServiceModel;
-using System.ServiceModel.Description;
 using System.ServiceModel.Channels;
+using System.ServiceModel.Description;
+using System.Threading;
 
 namespace Test
 {
-    class Test_WCF
+    internal class Test_WCF
     {
-        const bool UsePipes = true;
+        private const bool UsePipes = true;
         public static Binding Binding = UsePipes ? (Binding)MakePipeBinding() : MakeTcpBinding();
         public static Uri ServiceUri = new Uri(UsePipes ? "net.pipe://localhost/" : "net.tcp://localhost:18180/");
         public static string Service = "helloworld";
 
-        static byte[] _data;
+        private static byte[] _data;
+
         public static void Execute()
         {
             _data = new byte[TestConstants.DataSize];
@@ -32,7 +30,6 @@ namespace Test
                     using (var c = new ServiceProxy())
                         while (true)
                         {
-
                             var sw = Stopwatch.StartNew();
                             for (int i = 0; i < iter; i++)
                                 c.Call(_data);
@@ -81,14 +78,14 @@ namespace Test
     }
 
     [ServiceContract]
-    interface IService
+    internal interface IService
     {
         [OperationContract]
         byte[] Call(byte[] data);
     }
 
     [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Multiple, UseSynchronizationContext = false, InstanceContextMode = InstanceContextMode.Single)]
-    class Service : IService
+    internal class Service : IService
     {
         public byte[] Call(byte[] data)
         {
@@ -96,7 +93,7 @@ namespace Test
         }
     }
 
-    class ServiceProxy : ClientBase<IService>
+    internal class ServiceProxy : ClientBase<IService>
     {
         public ServiceProxy()
             : base(new ServiceEndpoint(ContractDescription.GetContract(typeof(IService)),

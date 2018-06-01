@@ -1,28 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using MsgPack;
+using NNanomsg;
+using System;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-using NNanomsg;
-using MsgPack;
-
 namespace Test
 {
-    static class Test_MsgPack
+    internal static class Test_MsgPack
     {
-
-        const int reqPort = 4444;
-        const int repPort = 4445;
+        private const int reqPort = 4444;
+        private const int repPort = 4445;
 
         public static void RunDevice(CancellationTokenSource cancellor)
         {
-
             var deviceThread = new Thread(() =>
             {
-
                 var reqSock = new NanomsgSocket(Domain.SP_RAW, Protocol.REP);
                 int reqSockId = reqSock.SocketID;
                 reqSock.Bind("tcp://127.0.0.1:" + reqPort);
@@ -43,16 +36,13 @@ namespace Test
 
         public static void RunWorker(CancellationTokenSource cancellor, int workerId)
         {
-
             var serverThread = new Thread(() =>
             {
-
                 var nanoSock = new NanomsgSocket(Domain.SP, Protocol.REP);
 
                 var nanoListener = new NanomsgListener();
                 nanoListener.ReceivedMessage += (socketId) =>
                 {
-
                     string input;
 
                     using (NanomsgReadStream inStream = nanoSock.ReceiveStream())
@@ -84,16 +74,12 @@ namespace Test
             });
             serverThread.Start();
             serverThread.Join(TimeSpan.FromMilliseconds(40));
-
         }
 
         public static string Request(string input)
         {
-
             // prepare Socket
             var nanoSock = new NanomsgSocket(Domain.SP, Protocol.REQ);
-
-
 
             string result = null;
             bool messageReceived = false;
@@ -117,7 +103,7 @@ namespace Test
             listener.AddSocket(nanoSock);
             nanoSock.Connect("tcp://127.0.0.1:" + reqPort);
             using (NanomsgWriteStream outStream = nanoSock.CreateSendStream())
-            using(var packer = Packer.Create(outStream))
+            using (var packer = Packer.Create(outStream))
             {
                 packer.PackString(input);
                 nanoSock.SendStream(outStream);
@@ -163,14 +149,12 @@ namespace Test
 
                 for (var i = 0; i < args.Length; i++)
                 {
-
                     var rnd = random.Next();
                     var arg = args[i] + " " + rnd;
                     // The NanoREQ
                     var message = Request(arg);
                     bool isValid = message == ("Hello " + arg);
                     consoleWriter.AppendFormat("{0} {1,4:D} {2} {3}\r\n", DateTime.Now.ToString("G"), (h * args.Length) + i, isValid, message);
-
                 }
                 Console.Write(consoleWriter.ToString());
             });

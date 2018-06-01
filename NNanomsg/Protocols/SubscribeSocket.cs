@@ -4,12 +4,15 @@ namespace NNanomsg.Protocols
 {
     public class SubscribeSocket : NanomsgSocketBase, IConnectSocket, IReceiveSocket
     {
-        public SubscribeSocket() : base(Domain.SP, Protocol.SUB) { }
+        public SubscribeSocket() : base(Domain.SP, Protocol.SUB)
+        {
+        }
 
         public void Subscribe(string topic)
         {
             NanomsgSocketOptions.SetString(SocketID, SocketOptionLevel.Subscribe, SocketOption.SUB_SUBSCRIBE, topic);
         }
+
         public void Subscribe(byte[] topic)
         {
             NanomsgSocketOptions.SetBytes(SocketID, SocketOptionLevel.Subscribe, SocketOption.SUB_SUBSCRIBE, topic);
@@ -19,12 +22,14 @@ namespace NNanomsg.Protocols
         {
             NanomsgSocketOptions.SetString(SocketID, SocketOptionLevel.Subscribe, SocketOption.SUB_UNSUBSCRIBE, topic);
         }
+
         public void Unsubscribe(byte[] topic)
         {
             NanomsgSocketOptions.SetBytes(SocketID, SocketOptionLevel.Subscribe, SocketOption.SUB_UNSUBSCRIBE, topic);
         }
 
         #region Connect
+
         public NanomsgEndpoint Connect(string address)
         {
             return ConnectImpl(address);
@@ -34,9 +39,11 @@ namespace NNanomsg.Protocols
         {
             return ConnectImpl(address, port);
         }
-        #endregion
+
+        #endregion Connect
 
         #region Receive
+
         public byte[] Receive()
         {
             return ReceiveImpl();
@@ -56,6 +63,7 @@ namespace NNanomsg.Protocols
         {
             return ReceiveStreamImmediateImpl();
         }
-        #endregion
+
+        #endregion Receive
     }
 }

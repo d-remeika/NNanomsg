@@ -8,13 +8,16 @@
         }
 
         #region Bind
+
         public NanomsgEndpoint Bind(string address)
         {
             return BindImpl(address);
         }
-        #endregion
+
+        #endregion Bind
 
         #region Send
+
         public void Send(byte[] buffer)
         {
             SendImpl(buffer);
@@ -39,9 +42,11 @@
         {
             return SendStreamImmediateImpl(stream);
         }
-        #endregion
+
+        #endregion Send
 
         #region Receive
+
         public byte[] Receive()
         {
             return ReceiveImpl();
@@ -61,6 +66,7 @@
         {
             return ReceiveStreamImmediateImpl();
         }
-        #endregion
+
+        #endregion Receive
     }
 }

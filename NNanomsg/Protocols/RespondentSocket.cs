@@ -4,9 +4,12 @@ namespace NNanomsg.Protocols
 {
     public class RespondentSocket : NanomsgSocketBase, IBindSocket, IConnectSocket, ISendSocket, IReceiveSocket
     {
-        public RespondentSocket() : base(Domain.SP, Protocol.RESPONDENT) { }
+        public RespondentSocket() : base(Domain.SP, Protocol.RESPONDENT)
+        {
+        }
 
         #region Connect
+
         public NanomsgEndpoint Connect(string address)
         {
             return ConnectImpl(address);
@@ -16,16 +19,20 @@ namespace NNanomsg.Protocols
         {
             return ConnectImpl(address, port);
         }
-        #endregion
+
+        #endregion Connect
 
         #region Bind
+
         public NanomsgEndpoint Bind(string address)
         {
             return BindImpl(address);
         }
-        #endregion
+
+        #endregion Bind
 
         #region Send
+
         public void Send(byte[] buffer)
         {
             SendImpl(buffer);
@@ -50,9 +57,11 @@ namespace NNanomsg.Protocols
         {
             return SendStreamImmediateImpl(stream);
         }
-        #endregion
+
+        #endregion Send
 
         #region Receive
+
         public byte[] Receive()
         {
             return ReceiveImpl();
@@ -72,6 +81,7 @@ namespace NNanomsg.Protocols
         {
             return ReceiveStreamImmediateImpl();
         }
-        #endregion
+
+        #endregion Receive
     }
 }

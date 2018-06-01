@@ -1,9 +1,9 @@
-﻿using System.Diagnostics;
-using NNanomsg;
+﻿using NNanomsg;
+using System.Diagnostics;
 
 namespace Test
 {
-    class Test_GetSetOptions
+    internal class Test_GetSetOptions
     {
         public static void Execute()
         {

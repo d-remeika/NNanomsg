@@ -1,21 +1,18 @@
 ﻿using System;
-using NNanomsg;
-using System.IO;
-using NNanomsg.Protocols;
 
 namespace Example
 {
-    class Program
+    internal class Program
     {
-        static void PrintUsage()
+        private static void PrintUsage()
         {
             Console.WriteLine("Usage: Example.exe <ReqRep|Pair|Listener> [other params]");
         }
 
         /// <summary>
-        ///     
+        ///
         /// </summary>
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             if (args.Length == 0)
             {
@@ -25,23 +22,34 @@ namespace Example
 
             switch (args[0])
             {
-                case "ReqRep": ReqRep.Execute(args);
+                case "ReqRep":
+                    ReqRep.Execute(args);
                     break;
-                case "Pair": Pair.Execute(args);
+
+                case "Pair":
+                    Pair.Execute(args);
                     break;
-                case "Listener": Listener.Execute(args);
+
+                case "Listener":
+                    Listener.Execute(args);
                     break;
-				case "Survey": Survey.Execute(args);
-					break;
-				case "pubsub": PubSub.Execute(args);
-					break;
-				case "bus": Bus.Execute(args);
-					break;
-				default:
+
+                case "Survey":
+                    Survey.Execute(args);
+                    break;
+
+                case "pubsub":
+                    PubSub.Execute(args);
+                    break;
+
+                case "bus":
+                    Bus.Execute(args);
+                    break;
+
+                default:
                     PrintUsage();
                     break;
             }
-
         }
     }
 }

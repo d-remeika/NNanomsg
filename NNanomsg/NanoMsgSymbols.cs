@@ -14,13 +14,13 @@ namespace NNanomsg
                 int value;
 
                 var ptr = Interop.nn_symbol(i, out value);
-                
+
                 string symbolText = Marshal.PtrToStringAnsi(ptr);
 
                 if (symbolText == null)
                     break;
 
-                FieldInfo field =  thisType.GetField(symbolText, BindingFlags.Static | BindingFlags.Public);
+                FieldInfo field = thisType.GetField(symbolText, BindingFlags.Static | BindingFlags.Public);
 
                 if (field != null)
                     field.SetValue(null, value);

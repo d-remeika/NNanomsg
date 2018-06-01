@@ -1,15 +1,16 @@
-﻿using System;
-using System.Text;
-using NNanomsg.Protocols;
-using System.Threading;
+﻿using NNanomsg.Protocols;
+using System;
 using System.Diagnostics;
+using System.Text;
+using System.Threading;
 
 namespace Test
 {
     public static class Test_PubSub
     {
-        const string InprocAddress = "inproc://127.0.0.1:6519";
-        const int DataSize = TestConstants.DataSize, BufferSize = 1024 * 4, Iter = TestConstants.Iterations * 10;
+        private const string InprocAddress = "inproc://127.0.0.1:6519";
+        private const int DataSize = TestConstants.DataSize, BufferSize = 1024 * 4, Iter = TestConstants.Iterations * 10;
+
         public static void Execute()
         {
             Console.WriteLine("Executing pubsub test ");
@@ -36,7 +37,7 @@ namespace Test
                             //        read += stream.Read(streamOutput, 0, streamOutput.Length);
                             //        var message = Encoding.ASCII.GetString(streamOutput, 0, read);
                             //        Trace.Assert(message.StartsWith("TestMessage"));
-                            //        
+                            //
                             //        break;
                             //    }
 
@@ -52,7 +53,6 @@ namespace Test
                 });
             clientThread.Start();
 
-            
             {
                 var publisher = new PublishSocket();
                 publisher.Bind(InprocAddress);
