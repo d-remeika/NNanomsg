@@ -1,5 +1,5 @@
-﻿using System.Runtime.InteropServices;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Runtime.InteropServices;
 
 namespace NNanomsg
 {
@@ -8,13 +8,11 @@ namespace NNanomsg
         public NanomsgException(string customError, int errorCode)
             : base(CreateError(customError, errorCode), errorCode)
         {
-
         }
 
         public NanomsgException(string customError)
             : this(customError, NN.Errno())
         {
-
         }
 
         public NanomsgException()
@@ -25,7 +23,7 @@ namespace NNanomsg
         /// <summary>
         /// This managed cache of error messages tries to avoid a repetitive re-marshaling of error strings.
         /// </summary>
-        static readonly Dictionary<int, string> _errorMessages = new Dictionary<int, string>();
+        private static readonly Dictionary<int, string> _errorMessages = new Dictionary<int, string>();
 
         public static string ErrorCodeToMessage(int errorCode)
         {
@@ -36,7 +34,7 @@ namespace NNanomsg
             return errorMessage;
         }
 
-        static string CreateError(string customError, int errorCode)
+        private static string CreateError(string customError, int errorCode)
         {
             string errorMessage = ErrorCodeToMessage(errorCode);
 

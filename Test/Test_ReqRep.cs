@@ -1,11 +1,11 @@
-﻿using System;
+﻿using NNanomsg;
+using System;
 using System.Diagnostics;
 using System.Threading;
-using NNanomsg;
 
 namespace Test
 {
-    class Test_ReqRep
+    internal class Test_ReqRep
     {
         public static void Execute()
         {
@@ -17,10 +17,11 @@ namespace Test
             byte[] buffer2;
 
             var clientThread = new Thread(
-                () => {
+                () =>
+                {
                     var req = NN.Socket(Domain.SP, Protocol.REQ);
                     NN.Connect(req, inprocAddress);
-                    NN.Send(req, BitConverter.GetBytes((int) 42), SendRecvFlags.NONE);
+                    NN.Send(req, BitConverter.GetBytes((int)42), SendRecvFlags.NONE);
                     NN.Recv(req, out buffer1, SendRecvFlags.NONE);
                     Debug.Assert(BitConverter.ToInt32(buffer1, 0) == 77);
                 });
@@ -30,7 +31,7 @@ namespace Test
             NN.Bind(rep, inprocAddress);
             NN.Recv(rep, out buffer2, SendRecvFlags.NONE);
             Debug.Assert(BitConverter.ToInt32(buffer2, 0) == 42);
-            NN.Send(rep, BitConverter.GetBytes((int) 77), SendRecvFlags.NONE);
+            NN.Send(rep, BitConverter.GetBytes((int)77), SendRecvFlags.NONE);
 
             // TODO: Test connection of multiple REQ clients to a single REP server.
         }

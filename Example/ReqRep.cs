@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using NNanomsg.Protocols;
+using System;
 using System.Text;
-using NNanomsg;
-using NNanomsg.Protocols;
 
 namespace Example
 {
     public class ReqRep
     {
-        static void Node0(string url)
+        private static void Node0(string url)
         {
             using (var s = new ReplySocket())
             {
@@ -20,7 +18,7 @@ namespace Example
             }
         }
 
-        static void Node1(string url)
+        private static void Node1(string url)
         {
             using (var s = new RequestSocket())
             {
@@ -36,10 +34,14 @@ namespace Example
         {
             switch (args[1])
             {
-                case "node0": Node0(args[2]);
+                case "node0":
+                    Node0(args[2]);
                     break;
-                case "node1": Node1(args[2]);
+
+                case "node1":
+                    Node1(args[2]);
                     break;
+
                 default:
                     Console.WriteLine("Usage: ...");
                     break;

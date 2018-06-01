@@ -10,12 +10,12 @@ namespace NNanomsg.Protocols
         public SurveyorSocket()
             : base(Domain.SP, Protocol.SURVEYOR)
         {
-
             if (SocketID >= 0)
                 SurveyorOptions = new SurveyorSocketOptions(SocketID);
         }
 
         #region Connect
+
         public NanomsgEndpoint Connect(string address)
         {
             return ConnectImpl(address);
@@ -25,16 +25,20 @@ namespace NNanomsg.Protocols
         {
             return ConnectImpl(address, port);
         }
-        #endregion
+
+        #endregion Connect
 
         #region Bind
+
         public NanomsgEndpoint Bind(string address)
         {
             return BindImpl(address);
         }
-        #endregion
+
+        #endregion Bind
 
         #region Send
+
         public void Send(byte[] buffer)
         {
             SendImpl(buffer);
@@ -59,9 +63,11 @@ namespace NNanomsg.Protocols
         {
             return SendStreamImmediateImpl(stream);
         }
-        #endregion
+
+        #endregion Send
 
         #region Receive
+
         public byte[] Receive()
         {
             return ReceiveImpl();
@@ -81,12 +87,13 @@ namespace NNanomsg.Protocols
         {
             return ReceiveStreamImmediateImpl();
         }
-        #endregion
+
+        #endregion Receive
     }
 
     public class SurveyorSocketOptions
     {
-        int _socket;
+        private int _socket;
 
         public SurveyorSocketOptions(int socket)
         {
@@ -94,7 +101,7 @@ namespace NNanomsg.Protocols
         }
 
         /// <summary>
-        /// Specifies how long to wait for responses to the survey. Once the deadline expires, receive function will return ETIMEDOUT error and all subsequent responses to the survey will be silently dropped. The deadline is measured in milliseconds. Option type is int. Default value is 1000 (1 second). 
+        /// Specifies how long to wait for responses to the survey. Once the deadline expires, receive function will return ETIMEDOUT error and all subsequent responses to the survey will be silently dropped. The deadline is measured in milliseconds. Option type is int. Default value is 1000 (1 second).
         /// </summary>
         public TimeSpan Deadline
         {

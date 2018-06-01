@@ -8,12 +8,13 @@ namespace NNanomsg
 {
     public unsafe class NanomsgWriteStream : Stream
     {
-        NanomsgSocketBase _socket;
-        int _length;
-        BufferHeader* _first, _current;
-        BufferPool _pool;
+        private NanomsgSocketBase _socket;
+        private int _length;
+        private BufferHeader* _first, _current;
+        private BufferPool _pool;
 
         #region Buffer
+
         //[DllImport("kernel32.dll", SetLastError = true)]
         //static extern IntPtr HeapCreate(uint flOptions, UIntPtr dwInitialsize, UIntPtr dwMaximumSize);
 
@@ -27,21 +28,22 @@ namespace NNanomsg
         //static extern bool HeapDestroy(IntPtr hHeap);
 
         [StructLayout(LayoutKind.Sequential)]
-        unsafe struct BufferHeader
+        private unsafe struct BufferHeader
         {
             public BufferHeader* Next;
             public int Size, Used;
             public static readonly int BufferHeaderSize = Marshal.SizeOf(typeof(BufferHeader));
+
             public static byte* Data(BufferHeader* header)
             {
                 return ((byte*)header) + BufferHeader.BufferHeaderSize;
             }
         }
 
-        unsafe class BufferPool
+        private unsafe class BufferPool
         {
-            int _pageSize, _capacity, _threadID;
-            readonly Queue<IntPtr> _pool;
+            private int _pageSize, _capacity, _threadID;
+            private readonly Queue<IntPtr> _pool;
 
             public BufferPool(int pageSize, int maxCached)
             {
@@ -95,13 +97,12 @@ namespace NNanomsg
                     header = next;
                 } while (header != null);
             }
-            
         }
 
-        static class ThreadBufferPool
+        private static class ThreadBufferPool
         {
             [ThreadStatic]
-            static BufferPool _pool;
+            private static BufferPool _pool;
 
             public static BufferPool Pool
             {
@@ -114,7 +115,7 @@ namespace NNanomsg
             }
         }
 
-        #endregion
+        #endregion Buffer
 
         public NanomsgWriteStream(NanomsgSocketBase socket)
         {
@@ -215,7 +216,7 @@ namespace NNanomsg
             return data;
         }
 
-        public struct BufferResult { public int Length; public IntPtr Buffer;}
+        public struct BufferResult { public int Length; public IntPtr Buffer; }
 
         public BufferResult FirstPage()
         {
@@ -232,7 +233,7 @@ namespace NNanomsg
             return new BufferResult() { Length = (*next).Used, Buffer = (IntPtr)BufferHeader.Data(next) };
         }
 
-        int EnsureCapacity()
+        private int EnsureCapacity()
         {
             var pool = _pool ?? (_pool = ThreadBufferPool.Pool);
 
@@ -283,6 +284,6 @@ namespace NNanomsg
             }
         }
 
-        //public 
+        //public
     }
 }

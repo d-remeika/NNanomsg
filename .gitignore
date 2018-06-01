@@ -19,3 +19,5 @@ Debug/
 *.vsp
 *.psess
 packages/
+.vs/
+NNanomsg/nugetpkg/

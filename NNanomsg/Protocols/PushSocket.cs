@@ -4,9 +4,12 @@ namespace NNanomsg.Protocols
 {
     public class PushSocket : NanomsgSocketBase, ISendSocket, IBindSocket, IConnectSocket
     {
-        public PushSocket() : base(Domain.SP, Protocol.PUSH) { }
+        public PushSocket() : base(Domain.SP, Protocol.PUSH)
+        {
+        }
 
         #region Connect
+
         public NanomsgEndpoint Connect(string address)
         {
             return ConnectImpl(address);
@@ -16,16 +19,20 @@ namespace NNanomsg.Protocols
         {
             return ConnectImpl(address, port);
         }
-        #endregion
+
+        #endregion Connect
 
         #region Bind
+
         public NanomsgEndpoint Bind(string address)
         {
             return BindImpl(address);
         }
-        #endregion
+
+        #endregion Bind
 
         #region Send
+
         public void Send(byte[] buffer)
         {
             SendImpl(buffer);
@@ -50,6 +57,7 @@ namespace NNanomsg.Protocols
         {
             return SendStreamImmediateImpl(stream);
         }
-        #endregion
+
+        #endregion Send
     }
 }

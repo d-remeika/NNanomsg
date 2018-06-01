@@ -2,16 +2,21 @@
 {
     public class PublishSocket : NanomsgSocketBase, IBindSocket, ISendSocket
     {
-        public PublishSocket() : base(Domain.SP, Protocol.PUB) { }
+        public PublishSocket() : base(Domain.SP, Protocol.PUB)
+        {
+        }
 
         #region Bind
+
         public NanomsgEndpoint Bind(string address)
         {
             return BindImpl(address);
         }
-        #endregion
+
+        #endregion Bind
 
         #region Send
+
         public void Send(byte[] buffer)
         {
             SendImpl(buffer);
@@ -36,6 +41,7 @@
         {
             return SendStreamImmediateImpl(stream);
         }
-        #endregion
+
+        #endregion Send
     }
 }

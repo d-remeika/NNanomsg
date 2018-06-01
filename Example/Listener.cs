@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.IO;
-using System.Text;
-using NNanomsg;
+﻿using NNanomsg;
 using NNanomsg.Protocols;
+using System;
+using System.Text;
 
 namespace Example
 {
-    class Listener
+    internal class Listener
     {
         public static void Execute(string[] args)
         {
@@ -25,7 +22,6 @@ namespace Example
                     Console.WriteLine("CLIENT finished");
                 }
             }
-
             else if (args[1] == "server")
             {
                 using (var rep = new ReplySocket())

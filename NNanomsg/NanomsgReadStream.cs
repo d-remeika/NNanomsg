@@ -11,9 +11,9 @@ namespace NNanomsg
 
     public unsafe class NanomsgReadStream : Stream
     {
-        long _length, _position;
-        byte* _buffer;
-        INativeDisposer<NanomsgReadStream> _disposer;
+        private long _length, _position;
+        private byte* _buffer;
+        private INativeDisposer<NanomsgReadStream> _disposer;
 
         public NanomsgReadStream(IntPtr buffer, long length, INativeDisposer<NanomsgReadStream> disposer)
         {
@@ -50,7 +50,6 @@ namespace NNanomsg
 
             if (buffer != null && length > 0 && _disposer != null)
                 _disposer.DisposeOf((IntPtr)buffer, this);
-            
 
             base.Dispose(disposing);
         }
@@ -91,8 +90,6 @@ namespace NNanomsg
                 _position = value;
             }
         }
-
-       
 
         public override int Read(byte[] buffer, int offset, int count)
         {
@@ -141,9 +138,11 @@ namespace NNanomsg
                 case SeekOrigin.Begin:
                     _position = offset;
                     break;
+
                 case SeekOrigin.Current:
                     _position += offset;
                     break;
+
                 case SeekOrigin.End:
                     _position = _length + offset;
                     break;

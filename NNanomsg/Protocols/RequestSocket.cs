@@ -15,6 +15,7 @@ namespace NNanomsg.Protocols
         }
 
         #region Connect
+
         public NanomsgEndpoint Connect(string address)
         {
             return ConnectImpl(address);
@@ -24,9 +25,11 @@ namespace NNanomsg.Protocols
         {
             return ConnectImpl(address, port);
         }
-        #endregion
+
+        #endregion Connect
 
         #region Send
+
         public void Send(byte[] buffer)
         {
             SendImpl(buffer);
@@ -51,9 +54,11 @@ namespace NNanomsg.Protocols
         {
             return SendStreamImmediateImpl(stream);
         }
-        #endregion
+
+        #endregion Send
 
         #region Receive
+
         public byte[] Receive()
         {
             return ReceiveImpl();
@@ -73,12 +78,13 @@ namespace NNanomsg.Protocols
         {
             return ReceiveStreamImmediateImpl();
         }
-        #endregion
+
+        #endregion Receive
     }
 
     public class RequestSocketOptions
     {
-        int _socket;
+        private int _socket;
 
         public RequestSocketOptions(int socket)
         {
@@ -86,7 +92,7 @@ namespace NNanomsg.Protocols
         }
 
         /// <summary>
-        /// This option is defined on the full REQ socket. If reply is not received in specified amount of milliseconds, the request will be automatically resent. The type of this option is int. Default value is 60000 (1 minute). 
+        /// This option is defined on the full REQ socket. If reply is not received in specified amount of milliseconds, the request will be automatically resent. The type of this option is int. Default value is 60000 (1 minute).
         /// </summary>
         public TimeSpan ResendInterval
         {

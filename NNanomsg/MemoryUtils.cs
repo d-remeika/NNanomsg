@@ -7,10 +7,10 @@ namespace NNanomsg
     {
         /// <summary>
         /// This isn't the fastest memory copy method for large reads (4k or above), but it has reliably good performance on all platforms.
-        /// 
+        ///
         /// This *is* the fastest method for reads up to around 512 bytes, on the platforms I tested.
-        /// 
-        /// Given that deserialization will be the most common consumption of this (protocol buffers and such), we will be far 
+        ///
+        /// Given that deserialization will be the most common consumption of this (protocol buffers and such), we will be far
         /// more likely to see many small reads.  We could consider swapping to a platform-specific bulk copy path for larger sizes.
         /// </summary>
         public unsafe static void CopyMemory(byte* src, byte* dest, int length)
@@ -20,10 +20,9 @@ namespace NNanomsg
 
             if (length >= 16)
             {
-                do 
+                do
                 {
-
-                    *(long*)dest = *(long*) src;
+                    *(long*)dest = *(long*)src;
                     *(long*)(dest + 8) = *(long*)(src + 8);
                     dest += 16;
                     src += 16;
@@ -62,7 +61,7 @@ namespace NNanomsg
         }
 
         [DllImport("msvcrt.dll", EntryPoint = "memcpy", CallingConvention = CallingConvention.Cdecl, SetLastError = false)]
-        static extern IntPtr memcpy(IntPtr dest, IntPtr src, int count);
+        private static extern IntPtr memcpy(IntPtr dest, IntPtr src, int count);
 
         public unsafe static void PinAndCopyMemory(byte* src, int srcIndex, byte[] dest, int destIndex, int len)
         {

@@ -8,7 +8,7 @@ namespace NNanomsg
     /// </summary>
     public class NanomsgSocketOptions
     {
-        int _socket;
+        private int _socket;
 
         public NanomsgSocketOptions(int socket)
         {
@@ -29,7 +29,7 @@ namespace NNanomsg
             int v = value.HasValue ? (int)value.Value.TotalMilliseconds : -1, size = sizeof(int);
             unsafe
             {
-                int result = Interop.nn_setsockopt(socket, (int) level, (int) opts, new IntPtr(&v), size);
+                int result = Interop.nn_setsockopt(socket, (int)level, (int)opts, new IntPtr(&v), size);
                 if (result != 0)
                     throw new NanomsgException(string.Format("nn_setsockopt {0}", opts));
             }
@@ -49,7 +49,7 @@ namespace NNanomsg
             int v = value, size = sizeof(int);
             unsafe
             {
-                int result = Interop.nn_setsockopt(socket, (int) level, (int) opts, new IntPtr(&v), size);
+                int result = Interop.nn_setsockopt(socket, (int)level, (int)opts, new IntPtr(&v), size);
                 if (result != 0)
                     throw new NanomsgException(string.Format("nn_setsockopt {0}", opts));
             }
@@ -70,6 +70,7 @@ namespace NNanomsg
             var bs = Encoding.UTF8.GetBytes(value);
             SetBytes(socket, level, opts, bs);
         }
+
         public static void SetBytes(int socket, SocketOptionLevel level, SocketOption opts, byte[] bs)
         {
             unsafe
@@ -261,7 +262,6 @@ namespace NNanomsg
                 return new IntPtr(GetInt(_socket, SocketOptionLevel.Default, SocketOption.RCVFD));
             }
         }
-
 
         public bool TcpNoDelay
         {

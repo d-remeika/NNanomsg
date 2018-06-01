@@ -1,22 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using NNanomsg;
+﻿using NNanomsg;
+using System;
 using System.Diagnostics;
+using System.Linq;
 
 namespace Test
 {
-    unsafe class Test_Stream
+    internal unsafe class Test_Stream
     {
-        static byte[] src;
+        private static byte[] src;
 
         internal static void Execute()
         {
             src = new byte[TestConstants.DataSize];
             new Random().NextBytes(src);
 
-            var bufferSizes = Enumerable.Range(8,7).Select(i => 1 << i);
+            var bufferSizes = Enumerable.Range(8, 7).Select(i => 1 << i);
             const int IterationCount = 1000;
             foreach (var bufferSize in bufferSizes)
             {
@@ -61,7 +59,6 @@ namespace Test
                     }
                 });
 
-
                 Test("msgstream_int64", () =>
                 {
                     fixed (byte* srcptr = src)
@@ -79,11 +76,10 @@ namespace Test
                             using (var dest = new NanomsgWriteStream(null))
                                 dest.Write(src, 0, src.Length);
                     });
-
             }
         }
 
-        static void Test(string name, Action a)
+        private static void Test(string name, Action a)
         {
             a();
             var duration = Enumerable.Range(1, 3).Select(
@@ -96,6 +92,5 @@ namespace Test
                 }).Min();
             Console.WriteLine("{0}: {1} ms", name, duration.TotalMilliseconds);
         }
-
     }
 }

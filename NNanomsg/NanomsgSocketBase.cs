@@ -1,26 +1,23 @@
 ﻿using System;
-using System.Net;
-using System.Threading;
 using System.Diagnostics;
+using System.Net;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace NNanomsg
 {
-
     public abstract class NanomsgSocketBase : IDisposable
     {
-        const int NullSocket = -1;
+        private const int NullSocket = -1;
 
         public Domain Domain { get; private set; }
         public Protocol Protocol { get; private set; }
         public NanomsgSocketOptions Options { get; private set; }
         public int SocketID { get { return _socket; } }
 
-        int _socket = NullSocket;
-        INativeDisposer<NanomsgReadStream> _freeReadDisposer;
-        INativeDisposer<NanomsgWriteStream> _freeWriteDisposer;
-        NanomsgReadStream _recycledReadStream;
-        NanomsgWriteStream _recycledWriteStream;
+        private int _socket = NullSocket;
+        private INativeDisposer<NanomsgReadStream> _freeReadDisposer;
+        private NanomsgReadStream _recycledReadStream;
 
         /// <summary>
         /// Initialize a new nanomsg socket for the given domain and protocol
@@ -53,7 +50,6 @@ namespace NNanomsg
                 return new NanomsgEndpoint() { ID = endpoint };
             else
                 throw new NanomsgException("nn_connect " + address);
-
         }
 
         /// <summary>
@@ -188,7 +184,6 @@ namespace NNanomsg
             }
         }
 
-
         internal unsafe void SendMessage(nn_msghdr* messageHeader)
         {
             int sentBytes = Interop.nn_sendmsg(_socket, messageHeader, (int)SendRecvFlags.NONE);
@@ -308,7 +303,7 @@ namespace NNanomsg
             return Receive(SendRecvFlags.DONTWAIT);
         }
 
-        byte[] Receive(SendRecvFlags flags)
+        private byte[] Receive(SendRecvFlags flags)
         {
             IntPtr buffer = IntPtr.Zero;
             int rc = Interop.nn_recv(_socket, ref buffer, Constants.NN_MSG, (int)flags);
@@ -365,7 +360,7 @@ namespace NNanomsg
                 return stream;
         }
 
-        NanomsgReadStream ReceiveStream(SendRecvFlags flags)
+        private NanomsgReadStream ReceiveStream(SendRecvFlags flags)
         {
             IntPtr buffer = IntPtr.Zero;
             int rc = Interop.nn_recv(_socket, ref buffer, Constants.NN_MSG, (int)flags);
@@ -377,9 +372,9 @@ namespace NNanomsg
              * In order to prevent managed allocations per receive, we attempt to recycle stream objects.  This
              * will work optimally if the stream is disposed before the next receive call, as in this case each
              * socket class will always reuse the same stream.
-             * 
+             *
              * Disposing the stream will both release its nanomsg-allocated native buffer and return it to its
-             * socket class for reuse.  
+             * socket class for reuse.
              */
 
             var stream = Interlocked.Exchange(ref _recycledReadStream, null);
@@ -393,12 +388,12 @@ namespace NNanomsg
             return stream;
         }
 
-        void RecycleStream(NanomsgReadStream messageStream)
+        private void RecycleStream(NanomsgReadStream messageStream)
         {
             _recycledReadStream = messageStream;
         }
 
-        class NanomsgNativeDisposer : INativeDisposer<NanomsgReadStream>
+        private class NanomsgNativeDisposer : INativeDisposer<NanomsgReadStream>
         {
             public NanomsgSocketBase Socket;
 
