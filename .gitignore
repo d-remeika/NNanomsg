@@ -19,3 +19,4 @@ Debug/
 *.vsp
 *.psess
 packages/
+.vs/
