@@ -72,7 +72,6 @@ namespace NNanomsg
             {
                 Console.WriteLine("DEBUG: Poll threw exception, ignoring: " + e);
                 Thread.Sleep(TimeSpan.FromSeconds(1)); // This shouldn't ever happen, but when it does (!), this prevents a screen full of text.
-                return;
             }
             finally
             {
