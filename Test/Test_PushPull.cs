@@ -1,22 +1,19 @@
-﻿using System;
+﻿using NNanomsg.Protocols;
+using System;
 using System.Diagnostics;
 using System.Threading;
-using NNanomsg;
-using NNanomsg.Protocols;
 
 namespace Test
 {
-    class Test_PushPull
+    internal class Test_PushPull
     {
-        
-            static byte[] _clientData, _serverData;
-            const string InprocAddress = "inproc://pushpull_test", InprocAddressReverse = "inproc://pushpull_test_reverse";
-        const int DataSize = TestConstants.DataSize, BufferSize = 1024 * 4, Iter = TestConstants.Iterations;
+        private static byte[] _clientData, _serverData;
+        private const string InprocAddress = "inproc://pushpull_test", InprocAddressReverse = "inproc://pushpull_test_reverse";
+        private const int DataSize = TestConstants.DataSize, BufferSize = 1024 * 4, Iter = TestConstants.Iterations;
 
         public static void Execute()
         {
             Console.WriteLine("Executing PushPull test");
-
 
             _clientData = new byte[DataSize];
             _serverData = new byte[DataSize];
@@ -24,7 +21,6 @@ namespace Test
             r.NextBytes(_clientData);
             r.NextBytes(_serverData);
 
-        
             var clientThread = new Thread(
                 () =>
                 {
@@ -33,7 +29,7 @@ namespace Test
 
                     var revreq = new PullSocket();
                     revreq.Bind(InprocAddressReverse);
-                    
+
                     byte[] streamOutput = new byte[BufferSize];
                     while (true)
                     {
@@ -79,7 +75,6 @@ namespace Test
 
                 clientThread.Abort();
             }
-        
         }
     }
 }

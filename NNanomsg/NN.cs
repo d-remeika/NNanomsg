@@ -29,7 +29,7 @@ namespace NNanomsg
                 var bs = Encoding.UTF8.GetBytes(val);
                 fixed (byte* pBs = bs)
                 {
-                    return Interop.nn_setsockopt(s, Constants.NN_SOL_SOCKET, (int) option, new IntPtr(pBs), bs.Length);
+                    return Interop.nn_setsockopt(s, Constants.NN_SOL_SOCKET, (int)option, new IntPtr(pBs), bs.Length);
                 }
             }
         }
@@ -50,7 +50,7 @@ namespace NNanomsg
         {
             unsafe
             {
-                return Interop.nn_setsockopt(s, Constants.NN_SOL_SOCKET, (int) option, new IntPtr(&val), sizeof (int));
+                return Interop.nn_setsockopt(s, Constants.NN_SOL_SOCKET, (int)option, new IntPtr(&val), sizeof(int));
             }
         }
 
@@ -111,7 +111,7 @@ namespace NNanomsg
         {
             IntPtr buffer = IntPtr.Zero;
             int rc = Interop.nn_recv(s, ref buffer, Constants.NN_MSG, (int)flags);
-            
+
             if (rc < 0)
             {
                 buf = null;
@@ -126,7 +126,7 @@ namespace NNanomsg
             {
                 buf[i] = Marshal.ReadByte(buffer, i);
             }
-            
+
             int rc_free = Interop.nn_freemsg(buffer);
             Debug.Assert(rc_free == 0);
 
@@ -217,5 +217,4 @@ namespace NNanomsg
             return Marshal.PtrToStringAnsi(Interop.nn_symbol(i, out value));
         }
     }
-
 }

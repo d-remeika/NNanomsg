@@ -1,11 +1,11 @@
-﻿using System;
+﻿using NNanomsg;
+using System;
 using System.Diagnostics;
 using System.Threading;
-using NNanomsg;
 
 namespace Test
 {
-    class Test_Listener
+    internal class Test_Listener
     {
         public static void Execute()
         {
@@ -18,7 +18,8 @@ namespace Test
             byte[] buffer2;
 
             var clientThread = new Thread(
-                () => {
+                () =>
+                {
                     var req1 = NN.Socket(Domain.SP, Protocol.REQ);
                     NN.Connect(req1, unusedAddress);
                     var req = NN.Socket(Domain.SP, Protocol.REQ);
@@ -39,7 +40,7 @@ namespace Test
             var listener = new NanomsgListener();
             listener.AddSocket(unused);
             listener.AddSocket(rep);
-            listener.ReceivedMessage += delegate(int s)
+            listener.ReceivedMessage += delegate (int s)
                 {
                     NN.Recv(s, out buffer2, SendRecvFlags.NONE);
                     Console.WriteLine("Message: " + BitConverter.ToInt32(buffer2, 0));

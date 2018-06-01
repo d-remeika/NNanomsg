@@ -1,15 +1,15 @@
-﻿using System;
+﻿using NNanomsg.Protocols;
+using System;
 using System.Diagnostics;
 using System.Threading;
-using NNanomsg.Protocols;
 
 namespace Test
 {
-    class Test_WriteStream
+    internal class Test_WriteStream
     {
-        static byte[] _clientData, _serverData;
-        const string InprocAddress = "inproc://writestream_test";
-        const int DataSize = TestConstants.DataSize, BufferSize = 1024 * 4, Iter = TestConstants.Iterations;
+        private static byte[] _clientData, _serverData;
+        private const string InprocAddress = "inproc://writestream_test";
+        private const int DataSize = TestConstants.DataSize, BufferSize = 1024 * 4, Iter = TestConstants.Iterations;
 
         public static void Execute()
         {
@@ -26,7 +26,7 @@ namespace Test
                 {
                     var req = new PairSocket();
                     req.Connect(InprocAddress);
-                    
+
                     byte[] streamOutput = new byte[BufferSize];
                     while (true)
                     {
@@ -39,7 +39,7 @@ namespace Test
                                 var result = req.SendStreamImmediate(writeStream);
                                 Trace.Assert(result);
                             }
-                            
+
                             int read = 0;
                             using (var stream = req.ReceiveStream())
                                 while (stream.Length != stream.Position)
@@ -76,12 +76,10 @@ namespace Test
                         var result = rep.SendStreamImmediate(writeStream);
                         Trace.Assert(result);
                     }
-                    
                 }
 
                 clientThread.Abort();
             }
-        
         }
     }
 }

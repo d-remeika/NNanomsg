@@ -1,7 +1,6 @@
-﻿
-namespace Test
+﻿namespace Test
 {
-    class Program
+    internal class Program
     {
         private static void Main(string[] args)
         {

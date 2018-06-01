@@ -1,16 +1,15 @@
-﻿using System;
+﻿using NNanomsg;
+using System;
 using System.Diagnostics;
 using System.Threading;
-using NNanomsg;
-using System.Runtime.InteropServices;
 
 namespace Test
 {
-    class Test_SocketObject
+    internal class Test_SocketObject
     {
-        static byte[] _clientData, _serverData;
-        const string InprocAddress = "inproc://127.0.0.1:6520";
-        const int DataSize = TestConstants.DataSize, BufferSize = 1024 * 4, Iter = TestConstants.Iterations;
+        private static byte[] _clientData, _serverData;
+        private const string InprocAddress = "inproc://127.0.0.1:6520";
+        private const int DataSize = TestConstants.DataSize, BufferSize = 1024 * 4, Iter = TestConstants.Iterations;
 
         public static void Execute()
         {
