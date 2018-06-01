@@ -48,7 +48,7 @@
     <Compile Include="NanomsgReadStream.cs" />
     <Compile Include="NanomsgWriteStream.cs" />
     <Compile Include="NN.cs" />
-    <Compile Include="Listener.cs" />
+    <Compile Include="NanomsgListener.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Protocols\BusSocket.cs" />
     <Compile Include="Protocols\PairSocket.cs" />
