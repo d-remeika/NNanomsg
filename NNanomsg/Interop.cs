@@ -91,8 +91,8 @@ namespace NNanomsg
             var paths = new[]
                 {
                     calculatexdir(assemblyDirectory, "net40", libFile),
-                    Path.Combine(assemblyDirectory, "bin", Environment.Is64BitProcess ? "x64" : "x86", libFile),
-                    Path.Combine(assemblyDirectory, Environment.Is64BitProcess ? "x64" : "x86", libFile),
+                    Path.Combine(assemblyDirectory, "bin", Environment.Is64BitProcess ? "x64" : "x86", libFile),  
+                    Path.Combine(assemblyDirectory, Environment.Is64BitProcess ? "x64" : "x86", libFile),  
                     Path.Combine(assemblyDirectory, libFile),
 
                     Path.Combine(rootDirectory, "bin", Environment.Is64BitProcess ? "x64" : "x86", libFile),
@@ -127,66 +127,85 @@ namespace NNanomsg
         private static IntPtr LoadPosixLibrary(string libName, out SymbolLookupDelegate symbolLookup)
         {
             const int RTLD_NOW = 2;
-            const int RTLD_GLOBAL = 256;
-            string libFile = "lib" + libName.ToLower() + ".so";
+            // RTLD_NOLOAD is different on OSX and Linux
+            // https://opensource.apple.com/source/dyld/dyld-195.5/include/dlfcn.h.auto.html
+            int RTLD_NOLOAD = (Environment.OSVersion.Platform == PlatformID.MacOSX ? 16 : 4);
+            string libsuffix = (Environment.OSVersion.Platform == PlatformID.MacOSX ? ".dylib" : ".so");
+            string libFileBase = "lib" + libName.ToLower();
             string rootDirectory = AppDomain.CurrentDomain.BaseDirectory;
             string assemblyDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            string searched = "";
 
-            var libs = new[]
+            // Support libnanomsg installed into the system.
+            // Try to open nanomsg library versions from the newest to the oldest.
+            // Versions:
+            // 5     - nanomsg 1.1.3+
+            // 5.1.0 - nanomsg 1.1.0 ... 1.1.2
+            // 5.0.0 - nanomsg 0.9-beta ... 1.0.x
+            // 4.0.0 - nanomsg 0.8-beta
+            // 3.0.0 - nanomsg 0.7-beta
+            // 0     - nanomsg 0.6-beta or older
+            // ""    - fallback to the SDK symlink or the shipped binary.
+            var versions = new []
                 {
-                    libFile + ".5",
-                    libFile + ".5.1.0",
-                    libFile + ".5.0.0",
-                    libFile + ".4.0.0",
-                    libFile + ".3.0.0",
-                    libFile + ".0",
-                    libFile
+                  ".5", ".5.1.0", ".5.0.0", ".4.0.0", ".3.0.0", ".0", ""
                 };
 
-            var paths = new[]
-                {
-                    "/usr/local/lib" + (Environment.Is64BitProcess ? "64" : "32"),
-                    "/usr/local/lib",
-                    "/usr/lib" + (Environment.Is64BitProcess ? "64" : "32"),
-                    "/usr/lib",
-                    Path.Combine(assemblyDirectory, "net40"),
-                    Path.Combine(rootDirectory, "bin", Environment.Is64BitProcess ? "x64" : "x86"),
-                    Path.Combine(rootDirectory, Environment.Is64BitProcess ? "x64" : "x86"),
-                    rootDirectory,
-                };
-
-            foreach (var path in paths)
+            // Support the embedded Mono case when the native binary is
+            // also linked with nanomsg.
+            foreach (var ver in versions)
             {
-                if (path == null)
-                {
-                    continue;
-                }
+                string libFile = (Environment.OSVersion.Platform == PlatformID.MacOSX ? libFileBase + ver + libsuffix : libFileBase + libsuffix + ver);
+                var addr = dlopen(libFile, RTLD_NOW + RTLD_NOLOAD);
 
-                foreach (var lib in libs)
+                // It's not an error when dlopen() returns NULL in this case.
+                // We'll retry later without RTLD_NOLOAD.
+                if (addr == IntPtr.Zero)
+                    continue;
+
+                symbolLookup = dlsym;
+                NativeLibraryPath = libFile;
+                return addr;
+            };
+
+            foreach (var ver in versions)
+            {
+                string libFile = (Environment.OSVersion.Platform == PlatformID.MacOSX ? libFileBase + ver + libsuffix : libFileBase + libsuffix + ver);
+
+                // Prefer libFile as is, i.e. dlopen() searches it for us.
+                // This solves multilib and path finding problems for us.
+                var paths = new[]
+                    {
+                        libFile,
+                        calculatexdir(assemblyDirectory, "net40", libFile),
+                        Path.Combine(rootDirectory, "bin", Environment.Is64BitProcess ? "x64" : "x86", libFile),
+                        Path.Combine(rootDirectory, Environment.Is64BitProcess ? "x64" : "x86", libFile),
+                        Path.Combine(rootDirectory, libFile),
+                    };
+
+                foreach (var path in paths)
                 {
-                    if (lib == null)
+                    if (path == null)
                     {
                         continue;
                     }
 
-                    string libpath = Path.Combine(path, lib);
-
-                    if (File.Exists(libpath))
+                    var addr = dlopen(path, RTLD_NOW);
+                    if (addr == IntPtr.Zero)
                     {
-                        var addr = dlopen(libpath, RTLD_NOW + RTLD_GLOBAL);
-                        if (addr == IntPtr.Zero)
-                        {
-                            // Not using NanosmgException because it depends on nn_errno.
-                            throw new Exception("dlopen failed: " + libpath + " : " + Marshal.PtrToStringAnsi(dlerror()));
-                        }
-                        symbolLookup = dlsym;
-                        NativeLibraryPath = libpath;
-                        return addr;
+                        // It's not an error if dlopen() returns NULL.
+                        // We'll retry with a different path.
+                        continue;
                     }
+                    symbolLookup = dlsym;
+                    NativeLibraryPath = path;
+                    return addr;
                 }
-            }
 
-            throw new Exception("dlopen failed: unable to locate library " + libFile + ". Searched: " + paths.Aggregate((a, b) => a + "; " + b));
+                searched = searched + paths.Aggregate((a, b) => a + "; " + b);
+            };
+
+            throw new Exception("dlopen failed: unable to locate nanomsg library. Searched: " + searched);
         }
 
         public delegate IntPtr SymbolLookupDelegate(IntPtr addr, string name);
